@@ -1,0 +1,73 @@
+---
+description: General project conventions and coding standards for IAABO Referee Hub
+globs: ["src/**/*.ts", "src/**/*.tsx"]
+---
+
+# Project Conventions
+
+## Technology Stack
+
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **Backend**: Supabase (PostgreSQL, Auth, Edge Functions)
+- **State Management**: React Query for server state
+- **Forms**: React Hook Form with Zod validation
+- **Routing**: React Router DOM
+
+## Code Style
+
+### ESLint Rules (Enforced)
+
+The following rules are enabled and must be followed:
+
+1. **`@typescript-eslint/no-unused-vars`** - All variables must be used
+   - Prefix intentionally unused variables with `_` (e.g., `_error`, `_unused`)
+   - Remove unused imports instead of leaving them
+
+2. **`react-hooks/purity`** - Components and hooks must be pure
+   - Never call `Math.random()` or `Date.now()` directly during render
+   - Use `useState(() => Math.random())` for random initial values
+   - Use `useEffect` with intervals for time-based updates
+
+3. **`react-hooks/set-state-in-effect`** - Avoid setState in effects when possible
+   - Use `useState` initializer functions instead: `useState(() => computeValue())`
+   - For data that depends on props, use `useMemo` instead of `useEffect` + `setState`
+
+4. **`react-hooks/rules-of-hooks`** - Hooks must be called unconditionally
+   - Never call hooks after an early return
+   - Move all `useState`/`useEffect` calls before any conditional returns
+
+### TypeScript
+- Use strict TypeScript configuration
+- Prefer interfaces over types for object shapes
+- Export types from dedicated type files in `src/types/`
+- Use explicit return types for functions
+- Avoid `any` type - use proper types or `unknown` with type guards
+
+### React Components
+- Use functional components with hooks
+- Place components in `src/components/`
+- Use shadcn/ui components from `src/components/ui/`
+- Follow the component file naming: `ComponentName.tsx`
+
+### File Organization
+- Group by feature when possible
+- Keep related files close together
+- Use index files for clean exports
+
+## Naming Conventions
+
+- **Components**: PascalCase (`UserProfile.tsx`)
+- **Hooks**: camelCase with `use` prefix (`useAuth.ts`)
+- **Utilities**: camelCase (`formatDate.ts`)
+- **Constants**: SCREAMING_SNAKE_CASE
+- **Types/Interfaces**: PascalCase with descriptive names
+
+## Import Order
+
+1. React and external libraries
+2. Internal components
+3. Hooks and utilities
+4. Types
+5. Styles/Assets

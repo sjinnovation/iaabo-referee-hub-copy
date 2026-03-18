@@ -1,0 +1,266 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 20%;
+
+    --primary: 0 73% 51%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 20%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 0 73% 51%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 73% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 73% 51%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 20%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 0 73% 51%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 25%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 30%;
+    --sidebar-ring: 0 73% 51%;
+
+    --chart-1: 0 73% 51%;
+    --chart-2: 0 0% 45%;
+    --chart-3: 0 0% 70%;
+    --chart-4: 0 73% 65%;
+    --chart-5: 0 0% 30%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+  }
+
+  /* Rich text editor placeholder */
+  .ProseMirror[data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: hsl(var(--muted-foreground));
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+
+  /* Clear floats so content after floated images wraps correctly */
+  .ProseMirror.rich-text-editor::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+  /* Editor: make resize wrapper float so text flows beside image (wrapper is block-level and would otherwise contain the float).
+   * Match on data-align because the resize NodeView may not apply align classes to the inner img. */
+  .rich-text-editor-wrap .ProseMirror [data-resize-container]:has(img.float-left),
+  .rich-text-editor-wrap .ProseMirror [data-resize-wrapper]:has(img.float-left),
+  .rich-text-editor-wrap .ProseMirror [data-resize-container]:has(img[data-align="left"]),
+  .rich-text-editor-wrap .ProseMirror [data-resize-wrapper]:has(img[data-align="left"]) {
+    float: left;
+    margin-right: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .rich-text-editor-wrap .ProseMirror [data-resize-container]:has(img.float-right),
+  .rich-text-editor-wrap .ProseMirror [data-resize-wrapper]:has(img.float-right),
+  .rich-text-editor-wrap .ProseMirror [data-resize-container]:has(img[data-align="right"]),
+  .rich-text-editor-wrap .ProseMirror [data-resize-wrapper]:has(img[data-align="right"]) {
+    float: right;
+    margin-left: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Rich text block viewer: allow text to wrap beside floated images */
+  .rich-text-content::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+  /* Contain floats so text flows beside image (BFC) */
+  .rich-text-content-inner {
+    overflow: auto;
+  }
+  .rich-text-content-inner::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+  .rich-text-content .prose img,
+  .prose .rich-text-content-inner img {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  /* Resizable image handles (TipTap ResizableNodeView) – visible on all 4 sides, no border */
+  [data-resize-handle] {
+    z-index: 20;
+    background: hsl(var(--muted-foreground) / 0.5);
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: background 0.15s;
+  }
+  [data-resize-handle]:hover {
+    background: hsl(var(--muted-foreground) / 0.75);
+  }
+  /* Edge handles: need explicit size (position set by TipTap) */
+  [data-resize-handle='top'],
+  [data-resize-handle='bottom'] {
+    height: 8px;
+    left: 0;
+    right: 0;
+    cursor: ns-resize;
+  }
+  [data-resize-handle='left'],
+  [data-resize-handle='right'] {
+    width: 8px;
+    top: 0;
+    bottom: 0;
+    cursor: ew-resize;
+  }
+  /* Corner handles (if used) */
+  [data-resize-handle='top-left'],
+  [data-resize-handle='top-right'],
+  [data-resize-handle='bottom-left'],
+  [data-resize-handle='bottom-right'] {
+    width: 10px;
+    height: 10px;
+    cursor: nwse-resize;
+  }
+  [data-resize-handle='top-right'],
+  [data-resize-handle='bottom-left'] {
+    cursor: nesw-resize;
+  }
+}
+
+/*
+ * Rich text editor: remove ALL borders/outlines from image and its wrappers.
+ * Placed here (no @layer) so these rules override Tailwind and ProseMirror defaults.
+ * The global * { border-border } and ProseMirror selection styling must not apply to editor images.
+ */
+/* Catch-all: every element inside the editor content must not show a border (global * sets border-color). */
+.rich-text-editor-wrap .ProseMirror,
+.rich-text-editor-wrap .ProseMirror * {
+  border: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+}
+.rich-text-editor-wrap .ProseMirror img,
+.rich-text-editor-wrap .ProseMirror [data-resize-container],
+.rich-text-editor-wrap .ProseMirror [data-resize-wrapper],
+.rich-text-editor-wrap .ProseMirror .ProseMirror-selectednode,
+.rich-text-editor-wrap .ProseMirror .ProseMirror-selectednode img,
+.rich-text-editor-wrap .ProseMirror .ProseMirror-selectednode [data-resize-container],
+.rich-text-editor-wrap .ProseMirror .ProseMirror-selectednode [data-resize-wrapper],
+.rich-text-editor-wrap .ProseMirror-selectednode,
+.rich-text-editor-wrap .ProseMirror-selectednode img,
+.rich-text-editor-wrap .ProseMirror-selectednode [data-resize-container],
+.rich-text-editor-wrap .ProseMirror-selectednode [data-resize-wrapper],
+.rich-text-editor-wrap .ProseMirror [data-node="image"],
+.rich-text-editor-wrap .ProseMirror [data-node="image"] img,
+.rich-text-editor-wrap .ProseMirror [data-node="image"] [data-resize-container],
+.rich-text-editor-wrap .ProseMirror [data-node="image"] [data-resize-wrapper],
+.rich-text-editor-wrap .ProseMirror p img,
+.rich-text-editor-wrap .ProseMirror div img,
+.rich-text-editor-wrap img {
+  border: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-color: transparent !important;
+  box-shadow: none !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  box-sizing: border-box;
+}
+/* Hide any ::before/::after selection indicators on selected nodes (e.g. resize handles or outline) */
+.rich-text-editor-wrap .ProseMirror-selectednode::before,
+.rich-text-editor-wrap .ProseMirror-selectednode::after,
+.rich-text-editor-wrap [data-resize-container]::before,
+.rich-text-editor-wrap [data-resize-container]::after {
+  display: none !important;
+}
+
+/* Maximum specificity: selected image must never show outline/border (ProseMirror default or focus) */
+.rich-text-editor-wrap .ProseMirror img.ProseMirror-selectednode,
+.rich-text-editor-wrap img.ProseMirror-selectednode,
+.rich-text-editor-wrap .ProseMirror-selectednode.ProseMirror-selectednode {
+  border: none !important;
+  border-width: 0 !important;
+  outline: none !important;
+  outline-width: 0 !important;
+  box-shadow: none !important;
+}
+.rich-text-editor-wrap .ProseMirror img.ProseMirror-selectednode:focus,
+.rich-text-editor-wrap .ProseMirror img.ProseMirror-selectednode:focus-visible,
+.rich-text-editor-wrap img.ProseMirror-selectednode:focus,
+.rich-text-editor-wrap img.ProseMirror-selectednode:focus-visible {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Selected image wrapper: ProseMirror adds outline/box-shadow to .ProseMirror-selectednode.
+   Override any selection ring/border on the wrapper and all descendants so only resize handles remain.
+   Also remove border from all descendants so global * { border-border } never shows a grey border. */
+.rich-text-editor-wrap .ProseMirror .ProseMirror-selectednode,
+.rich-text-editor-wrap .ProseMirror .ProseMirror-selectednode * {
+  border: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  outline: none !important;
+  outline-width: 0 !important;
+  box-shadow: none !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+}
+.rich-text-editor-wrap .ProseMirror .ProseMirror-selectednode {
+  border: none !important;
+  border-width: 0 !important;
+  border-color: transparent !important;
+}
+
+/* Resize handles: no border/outline (global * { border } must not apply) */
+.rich-text-editor-wrap [data-resize-handle],
+.rich-text-editor-wrap .ProseMirror [data-resize-handle] {
+  border: none !important;
+  border-width: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
